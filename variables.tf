@@ -3,8 +3,9 @@ variable "zone" {
 }
 
 variable "key_pair_name" {
-  default = "jacobmacbookpro"
+  default = ""
 }
+
 variable "public_key" {
-  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDRLBA2VU4Ayb7NHly5evnSPnzSXyBhmVATw2fnraRsSXQD7NdBYfuHDCpFQHCf2P6ZZTSkjpUM5rIC4o+HV8J8pUxjMXr9WSKa7tXjKxP89g40d5nokhRs1W0BBL1U6DNQHW3V1MjgZKolNH29jeN3f8wb8fg5YiyidbG9cu1GWj6oCKX7B1RIAHqY++SQ898s7WhUnFXeWSvCchF/QS+Wl1s4abtLz3/apdypsgygORjm53H3qcbdugDT6FvrwD9uOGsAOUFI9R9xc+A9nDi6Y6APKBQxgj9EuElofKijKCg0+FT8g8NreNy3sVco2QGtENMPtcOSw6MUBhOKc7cCwOj71TF7IcWXEfFf6vim4kBz9IYt82JW6dgv80G0eZWreEedGxQYnaM5bJEi0TkQQ6PIDMSdsMFLaZ7V7DfX6+y+/zkj4KYiT6cgTII2jQFzJnUFOWyhy3dy+9wYNime+q3hwrhoeSwozNZAiUnUDZ3lAZoU1baMIRLyt527ICQ+BRIKqGd6AyZW3t8IqZ/FvgXOkG0/KVtXmcL1ElQiQcjcYx33mO6RHSVQiJR2J6aAJZilUoZFt6qp60CNE3zZUycNMjE6FwmZ92Q2GXKAMWugbJe7qcjDgqY0u3KM90AWEwviB+jsnh8+8yqaK6r9v6gOsxGvjxRokrDpCbIF0w== jea@Jacobs-MacBook-Pro.local"
+  default = ""
 }
