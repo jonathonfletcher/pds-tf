@@ -68,7 +68,6 @@ resource "aws_route_table" "public_rt" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
-    # nat_gateway_id = aws_nat_gateway.vpc-nat-gateway.id
   }
 
   tags = {
@@ -96,14 +95,14 @@ resource "aws_eip" "pds-public-eip" {
 }
 
 ## VPC NAT(Network Address Translation) Gateway
-resource "aws_nat_gateway" "vpc-nat-gateway" {
-  allocation_id = aws_eip.nat-gateway-eip.id
-  subnet_id     = aws_subnet.pds_subnet.id
-  tags = {
-    Name = "pds-nat-gateway"
-  }
-  depends_on = [aws_internet_gateway.gw]
-}
+# resource "aws_nat_gateway" "vpc-nat-gateway" {
+#   allocation_id = aws_eip.nat-gateway-eip.id
+#   subnet_id     = aws_subnet.pds_subnet.id
+#   tags = {
+#     Name = "pds-nat-gateway"
+#   }
+#   depends_on = [aws_internet_gateway.gw]
+# }
 
 resource "aws_lb" "pds-nlb" {
   name               = "pds-nlb"

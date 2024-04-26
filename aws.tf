@@ -50,7 +50,7 @@ resource "aws_instance" "pds" {
   }
   instance_type               = "t4g.small"
   subnet_id                   = aws_subnet.pds_subnet.id
-  security_groups             = [aws_security_group.pds_sg.id]
+  vpc_security_group_ids      = [aws_security_group.pds_sg.id]
   associate_public_ip_address = true
   ami                         = "ami-0c6c29c5125214c77"
 
