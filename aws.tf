@@ -1,14 +1,6 @@
 resource "aws_launch_template" "pds" {
   name = "pds-launch-template"
 
-  block_device_mappings {
-    device_name = "/dev/sdf"
-
-    ebs {
-      volume_size = 22
-    }
-  }
-
   capacity_reservation_specification {
     capacity_reservation_preference = "open"
   }
@@ -54,6 +46,11 @@ resource "aws_instance" "pds" {
   associate_public_ip_address = true
   ami                         = "ami-0c6c29c5125214c77"
 
+  ebs_block_device {
+    device_name = "/dev/xvda"
+    volume_size = 22
+    volume_type = "gp3"
+  }
 
   cpu_options {
     core_count       = 2
