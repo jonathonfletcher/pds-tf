@@ -5,7 +5,7 @@ resource "aws_launch_template" "pds" {
     device_name = "/dev/sdf"
 
     ebs {
-      volume_size = 50
+      volume_size = 22
     }
   }
 
@@ -72,61 +72,4 @@ resource "aws_instance" "pds" {
       user_data,
     ]
   }
-}
-
-resource "aws_lb_target_group" "nlb_target_group_443" {
-  name               = "pds-tg-443"
-  port               = 443
-  protocol           = "TCP"
-  preserve_client_ip = "true"
-  ip_address_type    = "ipv4"
-  vpc_id             = aws_vpc.pds_vpc.id
-
-  depends_on = [aws_lb.pds-nlb]
-}
-
-resource "aws_lb_target_group" "nlb_target_group_80" {
-  name               = "pds-tg-80"
-  port               = 80
-  protocol           = "TCP"
-  preserve_client_ip = "true"
-  ip_address_type    = "ipv4"
-  vpc_id             = aws_vpc.pds_vpc.id
-
-  depends_on = [aws_lb.pds-nlb]
-}
-
-resource "aws_lb_listener" "pds_nlb_http" {
-  load_balancer_arn = aws_lb.pds-nlb.arn
-  port              = "80"
-  protocol          = "TCP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.nlb_target_group_80.arn
-  }
-}
-
-resource "aws_lb_listener" "pds_nlb_https" {
-  load_balancer_arn = aws_lb.pds-nlb.arn
-  port              = "443"
-  protocol          = "TCP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.nlb_target_group_443.arn
-  }
-}
-
-
-resource "aws_lb_target_group_attachment" "pds_tga_443" {
-  target_group_arn = aws_lb_target_group.nlb_target_group_443.arn
-  target_id        = aws_instance.pds.id
-  port             = 443
-}
-
-resource "aws_lb_target_group_attachment" "pds_tga_80" {
-  target_group_arn = aws_lb_target_group.nlb_target_group_80.arn
-  target_id        = aws_instance.pds.id
-  port             = 80
 }

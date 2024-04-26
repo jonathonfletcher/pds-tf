@@ -81,37 +81,10 @@ resource "aws_route_table_association" "public_subnet_asso" {
 }
 
 ## Elastic IP for NAT Gateway
-resource "aws_eip" "nat-gateway-eip" {
-  domain = "vpc"
-  tags = {
-    Name = "pds-nat-gateway-eip"
-  }
-}
 resource "aws_eip" "pds-public-eip" {
-  domain = "vpc"
+  domain   = "vpc"
+  instance = aws_instance.pds.id
   tags = {
     Name = "pds-public-eip"
-  }
-}
-
-## VPC NAT(Network Address Translation) Gateway
-# resource "aws_nat_gateway" "vpc-nat-gateway" {
-#   allocation_id = aws_eip.nat-gateway-eip.id
-#   subnet_id     = aws_subnet.pds_subnet.id
-#   tags = {
-#     Name = "pds-nat-gateway"
-#   }
-#   depends_on = [aws_internet_gateway.gw]
-# }
-
-resource "aws_lb" "pds-nlb" {
-  name               = "pds-nlb"
-  internal           = false
-  load_balancer_type = "network"
-  security_groups    = [aws_security_group.pds_sg.id]
-
-  subnet_mapping {
-    subnet_id     = aws_subnet.pds_subnet.id
-    allocation_id = aws_eip.pds-public-eip.id
   }
 }
