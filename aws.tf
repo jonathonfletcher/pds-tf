@@ -42,7 +42,7 @@ data "aws_ami" "ubuntu22" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-*"]
   }
 
   filter {
@@ -86,5 +86,6 @@ resource "aws_instance" "pds" {
       tags,
       user_data,
     ]
-  }
+  },
+  prevent_destroy = true
 }
