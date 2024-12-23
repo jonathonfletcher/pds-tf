@@ -25,17 +25,35 @@ resource "aws_launch_template" "pds" {
     }
   }
 
-  user_data = filebase64("${path.module}/launch.sh")
+  user_data = base64encode(templatefile("${path.module}/launch.sh", {
+    pds_hostname : var.pds_hostname,
+    pds_admin_email : var.pds_admin_email,
+  }))
 }
 
-resource "aws_key_pair" "jacob_key_pair" {
+resource "aws_key_pair" "my_key_pair" {
   key_name   = var.key_pair_name
   public_key = var.public_key
 }
 
+data "aws_ami" "ubuntu22" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 resource "aws_instance" "pds" {
   availability_zone = var.zone
-  key_name          = aws_key_pair.jacob_key_pair.key_name
+  key_name          = aws_key_pair.my_key_pair.key_name
   launch_template {
     version = "$Latest"
     id      = aws_launch_template.pds.id
@@ -44,7 +62,7 @@ resource "aws_instance" "pds" {
   subnet_id                   = aws_subnet.pds_subnet.id
   vpc_security_group_ids      = [aws_security_group.pds_sg.id]
   associate_public_ip_address = true
-  ami                         = "ami-0c6c29c5125214c77"
+  ami                         = data.aws_ami.ubuntu22.id
 
   ebs_block_device {
     device_name = "/dev/xvda"
@@ -59,7 +77,7 @@ resource "aws_instance" "pds" {
 
   tags = {
     Name = "pds-instance"
-    PDS  = "pds.jaronoff.com"
+    PDS  = var.pds_hostname
   }
   lifecycle {
     ignore_changes = [
@@ -68,5 +86,6 @@ resource "aws_instance" "pds" {
       tags,
       user_data,
     ]
-  }
+  },
+  prevent_destroy = true
 }

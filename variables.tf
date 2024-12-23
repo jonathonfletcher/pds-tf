@@ -9,3 +9,11 @@ variable "key_pair_name" {
 variable "public_key" {
   default = ""
 }
+
+variable "pds_hostname" {
+  default = ""
+}
+
+variable "pds_admin_email" {
+  default = ""
+}
