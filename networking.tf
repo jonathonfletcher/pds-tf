@@ -20,17 +20,19 @@ locals {
 
 resource "aws_vpc" "pds_vpc" {
   cidr_block = "10.0.0.0/16"
+  assign_generated_ipv6_cidr_block = true
 }
 
 resource "aws_subnet" "pds_subnet" {
-  availability_zone       = var.zone
+  availability_zone       = var.az
   vpc_id                  = aws_vpc.pds_vpc.id
-  map_public_ip_on_launch = "true" # This is what makes it a public subnet
-  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  cidr_block              = cidrsubnet(aws_vpc.pds_vpc.cidr_block, 4, 1)
+  ipv6_cidr_block         = cidrsubnet(aws_vpc.pds_vpc.ipv6_cidr_block, 8, 1)
+  assign_ipv6_address_on_creation = true
 }
 
 resource "aws_security_group" "pds_sg" {
-  name        = "pds_sg"
   description = "Allow TLS inbound traffic and all outbound traffic"
   vpc_id      = aws_vpc.pds_vpc.id
 
@@ -39,7 +41,7 @@ resource "aws_security_group" "pds_sg" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_ingress" {
+resource "aws_vpc_security_group_ingress_rule" "allow_ingress_ipv4" {
   count             = length(local.ingress_routes)
   security_group_id = aws_security_group.pds_sg.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -48,9 +50,24 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ingress" {
   to_port           = local.ingress_routes[count.index].to
 }
 
+resource "aws_vpc_security_group_ingress_rule" "allow_ingress_ipv6" {
+  count             = length(local.ingress_routes)
+  security_group_id = aws_security_group.pds_sg.id
+  cidr_ipv6         = "::/0"
+  from_port         = local.ingress_routes[count.index].from
+  ip_protocol       = local.ingress_routes[count.index].protocol
+  to_port           = local.ingress_routes[count.index].to
+}
+
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
   security_group_id = aws_security_group.pds_sg.id
   cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1" # semantically equivalent to all ports
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
+  security_group_id = aws_security_group.pds_sg.id
+  cidr_ipv6         = "::/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
@@ -70,6 +87,11 @@ resource "aws_route_table" "public_rt" {
     gateway_id = aws_internet_gateway.gw.id
   }
 
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
   tags = {
     Name = "public Route Table"
   }
@@ -80,7 +102,6 @@ resource "aws_route_table_association" "public_subnet_asso" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-## Elastic IP for NAT Gateway
 resource "aws_eip" "pds-public-eip" {
   domain   = "vpc"
   instance = aws_instance.pds.id

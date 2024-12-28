@@ -1,8 +1,12 @@
-variable "zone" {
+variable "region" {
+  default = "us-east-1"
+}
+
+variable "az" {
   default = "us-east-1a"
 }
 
-variable "key_pair_name" {
+variable "ssh_key_name" {
   default = ""
 }
 
@@ -16,4 +20,12 @@ variable "pds_hostname" {
 
 variable "pds_admin_email" {
   default = ""
+}
+
+variable "ebs_volume_type" {
+    default = "gp2"
+}
+
+variable "ebs_volume_size" {
+    default = "30"
 }

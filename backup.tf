@@ -74,7 +74,7 @@ resource "aws_dlm_lifecycle_policy" "daily" {
     }
 
     target_tags = {
-      Snapshot = "true"
+      Snapshot = true
     }
   }
 }
