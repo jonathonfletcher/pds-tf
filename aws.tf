@@ -39,20 +39,30 @@ resource "aws_key_pair" "pds_ssh_key" {
   public_key = var.public_key
 }
 
-# data "aws_ami" "ubuntu22" {
-#   most_recent = true
-#   owners      = ["amazon"]
-# 
-#   filter {
-#     name   = "name"
-#     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-arm64-*"]
-#   }
-# 
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-# }
+data "aws_ami" "ubuntu24" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd-*/ubuntu-noble-24.04-*-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["arm64"]
+  }
+}
 
 resource "aws_instance" "pds" {
   availability_zone = var.az
@@ -65,8 +75,8 @@ resource "aws_instance" "pds" {
   vpc_security_group_ids      = [aws_security_group.pds_sg.id]
   associate_public_ip_address = true
   ipv6_address_count          = 1
-  # ami                         = data.aws_ami.ubuntu22.id
-  ami = "ami-0fcae490e0416fb6f"
+  ami                         = data.aws_ami.ubuntu24.id
+  #   ami = "ami-0fcae490e0416fb6f"
 
   tags = {
     Name = var.pds_hostname
