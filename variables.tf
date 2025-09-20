@@ -23,9 +23,9 @@ variable "pds_admin_email" {
 }
 
 variable "ebs_volume_type" {
-    default = "gp2"
+  default = "gp2"
 }
 
 variable "ebs_volume_size" {
-    default = "30"
+  default = "30"
 }

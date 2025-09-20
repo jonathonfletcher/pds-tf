@@ -24,7 +24,7 @@ resource "aws_launch_template" "pds" {
   }
 
   metadata_options {
-    http_tokens = "required"
+    http_tokens                 = "required"
     http_put_response_hop_limit = "1"
   }
 
@@ -66,7 +66,7 @@ resource "aws_instance" "pds" {
   associate_public_ip_address = true
   ipv6_address_count          = 1
   # ami                         = data.aws_ami.ubuntu22.id
-  ami                         = "ami-0fcae490e0416fb6f"
+  ami = "ami-0fcae490e0416fb6f"
 
   tags = {
     Name = var.pds_hostname

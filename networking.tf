@@ -19,16 +19,16 @@ locals {
 }
 
 resource "aws_vpc" "pds_vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block                       = "10.0.0.0/16"
   assign_generated_ipv6_cidr_block = true
 }
 
 resource "aws_subnet" "pds_subnet" {
-  availability_zone       = var.az
-  vpc_id                  = aws_vpc.pds_vpc.id
-  map_public_ip_on_launch = true
-  cidr_block              = cidrsubnet(aws_vpc.pds_vpc.cidr_block, 4, 1)
-  ipv6_cidr_block         = cidrsubnet(aws_vpc.pds_vpc.ipv6_cidr_block, 8, 1)
+  availability_zone               = var.az
+  vpc_id                          = aws_vpc.pds_vpc.id
+  map_public_ip_on_launch         = true
+  cidr_block                      = cidrsubnet(aws_vpc.pds_vpc.cidr_block, 4, 1)
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.pds_vpc.ipv6_cidr_block, 8, 1)
   assign_ipv6_address_on_creation = true
 }
 
@@ -89,7 +89,7 @@ resource "aws_route_table" "public_rt" {
 
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id = aws_internet_gateway.gw.id
+    gateway_id      = aws_internet_gateway.gw.id
   }
 
   tags = {
